@@ -1,0 +1,3 @@
+Tommy, Tootone, Turtle, 2021-1-1, 10.5, y
+Kitty, Genevese, Cat, 2021-2-2, 9.5, y
+Grand, Paw, Dog, 2021-3-3, 15.5, n
