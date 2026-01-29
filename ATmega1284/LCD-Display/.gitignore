@@ -1,0 +1,32 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Compiled Executable files
+*.elf
+*.out
+
+# Hex files (can be regenerated)
+*.hex
+
+# Map files
+*.map
+
+# LSS files (assembly listing)
+*.lss
+
+# EEPROM files
+*.eep
+
+# Dependency files
+*.d
+
+# Editor backup files
+*~
+*.bak
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
