@@ -79,7 +79,7 @@ Bit Rate = Clock / (Prescaler × (1 + TSEG1 + TSEG2))
 125 kbps = 24 MHz / (Prescaler × Total_TQ)
 
 Example: Prescaler=12, TSEG1=13, TSEG2=2
-Bit time = (1 + 13 + 2) × (12/24MHz) = 16 × 0.5µs = 8µs = 125 kHz ✓
+Bit time = (1 + 13 + 2) × (12/24MHz) = 16 × 0.5µs = 8µs = 125 kbps ✓
 ```
 
 ## Building and Flashing

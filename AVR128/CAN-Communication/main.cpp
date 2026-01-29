@@ -28,7 +28,7 @@
 #include <string.h>
 
 // CAN bit timing for 125 kbps @ 24 MHz
-#define CAN_BITRATE_125KBPS
+// Note: Actual bit timing registers are device-specific
 
 // Function prototypes
 void can_init(void);
@@ -96,9 +96,8 @@ void can_init(void)
     
     // Configure bit timing for 125 kbps @ 24 MHz
     // Sample Point at ~87.5%
-    // Assuming: Prescaler=6, TSEG1=13, TSEG2=2
-    // Bit time = (1 + 13 + 2) * (6/24MHz) = 16 * 0.25µs = 4µs = 250kHz
-    // For 125kHz: Prescaler = 12
+    // For 125 kbps: Prescaler=12, TSEG1=13, TSEG2=2
+    // Bit time = (1 + 13 + 2) * (12/24MHz) = 16 * 0.5µs = 8µs = 125 kbps
     
     // Note: Register names are illustrative - check AVR128DA/DB datasheet
     // CAN.CTRLA - Control register A

@@ -45,7 +45,7 @@
 #define MCP_RESET       0xC0
 #define MCP_READ        0x03
 #define MCP_WRITE       0x02
-#define MCP_RTS         0x80
+#define MCP_RTS         0x80  // Base RTS command, OR with 0x01-0x07 to select TX buffer
 #define MCP_READ_STATUS 0xA0
 
 // MCP2515 Modes
@@ -176,8 +176,10 @@ void mcp2515_init(void)
     mcp2515_set_mode(MODE_CONFIG);
     
     // Configure bit timing for 125 kbps @ 16 MHz
-    // CNF1: SJW = 1 TQ, BRP = 7
-    mcp2515_write_register(MCP_CNF1, 0x03);
+    // Bit Rate = F_osc / (2 * (BRP+1) * (1 + PRSEG + PHSEG1 + PHSEG2))
+    // 125 kbps = 16 MHz / (2 * 8 * 16) = 16 MHz / 256
+    // CNF1: SJW = 1 TQ, BRP = 7 (bits 5:0 = 0x07)
+    mcp2515_write_register(MCP_CNF1, 0x07);
     // CNF2: BTLMODE = 1, SAM = 0, PHSEG1 = 6 TQ, PRSEG = 1 TQ
     mcp2515_write_register(MCP_CNF2, 0xB8);
     // CNF3: PHSEG2 = 6 TQ
