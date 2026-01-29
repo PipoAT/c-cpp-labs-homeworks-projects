@@ -12,6 +12,9 @@
 
 #include "lcd.h"
 
+// Static variable to track display control state
+static uint8_t display_control = LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_OFF | LCD_BLINK_OFF;
+
 /*
  * ============================================================================
  * LOW-LEVEL FUNCTIONS
@@ -200,7 +203,8 @@ void LCD_Init(void)
     _delay_us(40);
     
     // Display Control: Display ON, Cursor OFF, Blink OFF
-    LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_OFF | LCD_BLINK_OFF);
+    display_control = LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_OFF | LCD_BLINK_OFF;
+    LCD_Command(display_control);
     _delay_us(40);
     
     // Clear Display
@@ -326,6 +330,7 @@ void LCD_Puts(const char *str)
  * 
  * When turned off, the display content remains in memory.
  * Turning it back on will restore the display.
+ * This function preserves the current cursor and blink settings.
  * 
  * @param state 1 for ON, 0 for OFF
  */
@@ -333,20 +338,22 @@ void LCD_Display(uint8_t state)
 {
     if (state)
     {
-        // Turn display ON, cursor and blink remain at their previous state
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON);
+        // Turn display ON, preserve cursor and blink state
+        display_control |= LCD_DISPLAY_ON;
     }
     else
     {
-        // Turn display OFF
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_OFF);
+        // Turn display OFF, preserve cursor and blink state
+        display_control &= ~LCD_DISPLAY_ON;
     }
+    LCD_Command(display_control);
 }
 
 /**
  * @brief Controls the cursor visibility
  * 
  * The cursor appears as an underscore character at the current position.
+ * This function preserves the current display and blink settings.
  * 
  * @param state 1 to show cursor, 0 to hide cursor
  */
@@ -354,18 +361,22 @@ void LCD_Cursor(uint8_t state)
 {
     if (state)
     {
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_ON);
+        // Turn cursor ON, preserve display and blink state
+        display_control |= LCD_CURSOR_ON;
     }
     else
     {
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_OFF);
+        // Turn cursor OFF, preserve display and blink state
+        display_control &= ~LCD_CURSOR_ON;
     }
+    LCD_Command(display_control);
 }
 
 /**
  * @brief Controls cursor blinking
  * 
  * When enabled, the character at the cursor position blinks on and off.
+ * This function preserves the current display and cursor settings.
  * 
  * @param state 1 to enable blinking, 0 to disable blinking
  */
@@ -373,10 +384,13 @@ void LCD_Blink(uint8_t state)
 {
     if (state)
     {
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_ON | LCD_BLINK_ON);
+        // Turn blink ON, preserve display and cursor state
+        display_control |= LCD_BLINK_ON;
     }
     else
     {
-        LCD_Command(LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON | LCD_CURSOR_OFF | LCD_BLINK_OFF);
+        // Turn blink OFF, preserve display and cursor state
+        display_control &= ~LCD_BLINK_ON;
     }
+    LCD_Command(display_control);
 }

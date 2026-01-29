@@ -21,9 +21,6 @@
 #include <util/delay.h>
 #include <stdio.h>
 
-// CPU Frequency - must match lcd.h
-#define F_CPU 12000000UL
-
 /**
  * @brief Example 1: Display a welcome message
  * 

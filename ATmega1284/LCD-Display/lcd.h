@@ -13,12 +13,13 @@
 #ifndef LCD_H_
 #define LCD_H_
 
+// Frequency for the CPU/Micro controller. 12 MHz aka 12 million hertz
+// Must be defined before including delay.h
+#define F_CPU 12000000UL
+
 // This needs included with every AVR project
 #include <avr/io.h>
 #include <util/delay.h>
-
-// Frequency for the CPU/Micro controller. 12 MHz aka 12 million hertz
-#define F_CPU 12000000UL
 
 /*
  * ============================================================================
