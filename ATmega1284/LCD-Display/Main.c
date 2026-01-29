@@ -111,7 +111,7 @@ void Example_CursorDemo(void)
 void Example_ScrollingText(void)
 {
     const char* message = "ATmega1284";
-    uint8_t messageLen = 10;
+    uint8_t messageLen = 10;  // Length of "ATmega1284"
     uint8_t row = 2;
     
     LCD_Clear();
@@ -223,12 +223,21 @@ void Example_PositioningDemo(void)
         
         _delay_ms(200);
         
-        // Remove marker
+        // Remove marker - restore original character
         LCD_SetCursor(1, col);
-        if (col == 5 || col == 10 || col == 15)
-            LCD_Putc('5' + (col / 5));  // Restore column marker
-        else if (col == 0)
+        // The display shows "0    5    10   15  " on row 1
+        if (col == 0)
             LCD_Putc('0');
+        else if (col == 5)
+            LCD_Putc('5');
+        else if (col == 9)
+            LCD_Putc('1');  // First digit of "10"
+        else if (col == 10)
+            LCD_Putc('0');  // Second digit of "10"
+        else if (col == 15)
+            LCD_Putc('1');  // First digit of "15"
+        else if (col == 16)
+            LCD_Putc('5');  // Second digit of "15"
         else
             LCD_Putc(' ');
     }
