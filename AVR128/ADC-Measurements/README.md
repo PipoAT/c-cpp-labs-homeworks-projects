@@ -34,9 +34,9 @@ The AVR128DA/DB series features a powerful 12-bit ADC with the following capabil
 ### Optional Components:
 | Component | AVR128 Pin | Description |
 |-----------|------------|-------------|
-| LED (with resistor) | PA0 | Activity indicator |
-| UART TX | PC0 or PA0 | Serial output for readings |
-| UART RX | PC1 or PA1 | Serial input (if needed) |
+| LED (with resistor) | PA1 | Activity indicator |
+| UART TX | PA0 | Serial output for readings |
+| UART RX | PA1 (alternate) | Serial input (if needed) |
 
 **Note:** Pin assignments may vary based on your AVR128 variant and package. Consult the datasheet for your specific device.
 
@@ -146,7 +146,7 @@ avrdude -c serialupdi -p avr128db28 -U flash:w:main.hex:i
 3. Readings should match within ±10-50 mV (depending on reference accuracy)
 
 ### Visual Testing:
-- LED should blink at 1 Hz (toggles every 500ms)
+- LED on PA1 should blink at 1 Hz (500ms ON, 500ms OFF)
 - Indicates ADC is actively sampling
 
 ## Understanding the Code

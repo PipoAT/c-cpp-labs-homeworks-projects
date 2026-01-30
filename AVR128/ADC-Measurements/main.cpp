@@ -39,8 +39,8 @@ void uart_print_string(const char* str);
 void uart_print_number(uint16_t number);
 
 // Global variables for ADC readings
-volatile uint16_t adc_value = 0;
-volatile uint16_t voltage_mv = 0;
+uint16_t adc_value = 0;
+uint16_t voltage_mv = 0;
 
 int main(void)
 {
@@ -49,8 +49,8 @@ int main(void)
     adc_init();
     uart_init();
     
-    // Configure LED pin for visual indication (PA0)
-    PORTA.DIRSET = PIN0_bm;  // Set PA0 as output
+    // Configure LED pin for visual indication (PA1)
+    PORTA.DIRSET = PIN1_bm;  // Set PA1 as output
     
     uart_print_string("AVR128 ADC Example Started\r\n");
     uart_print_string("Reading analog input on PD0 (AIN0)\r\n\r\n");
@@ -74,7 +74,7 @@ int main(void)
         uart_print_string(" mV\r\n");
         
         // Toggle LED to indicate measurement activity
-        PORTA.OUTTGL = PIN0_bm;
+        PORTA.OUTTGL = PIN1_bm;
         
         // Visual feedback: LED brightness could be PWM-controlled based on ADC value
         // (not implemented in this basic example)
@@ -97,13 +97,14 @@ void system_init(void)
 // Initialize ADC peripheral
 void adc_init(void)
 {
-    // Configure ADC reference voltage
+    // Configure ADC reference voltage source via VREF peripheral
     // VREF.ADC0REF: Select internal 2.048V, 2.5V, 4.096V, or VDD reference
     // For VDD reference (typically 3.3V or 5V):
     VREF.ADC0REF = VREF_REFSEL_VDD_gc;  // Use VDD as reference
     
-    // Alternative: Use internal 2.5V reference for better accuracy
-    // VREF.ADC0REF = VREF_REFSEL_2V048_gc;
+    // Alternative internal references for better accuracy:
+    // VREF.ADC0REF = VREF_REFSEL_2V048_gc;  // Internal 2.048V
+    // VREF.ADC0REF = VREF_REFSEL_2V5_gc;    // Internal 2.5V
     
     // Configure ADC0
     // ADC0.CTRLA: Control Register A
@@ -114,11 +115,12 @@ void adc_init(void)
     // Default sample duration is usually adequate
     ADC0.CTRLB = ADC_SAMPNUM_NONE_gc;  // No accumulation (single sample)
     
-    // ADC0.CTRLC: Control Register C - Clock and reference
+    // ADC0.CTRLC: Control Register C - Clock and reference selection
     // Prescaler: ADC clock should be 50kHz - 1.5MHz for 12-bit resolution
     // For F_CPU = 24MHz, prescaler of 16 gives 1.5MHz ADC clock
+    // REFSEL should match the source configured in VREF.ADC0REF
     ADC0.CTRLC = ADC_PRESC_DIV16_gc     // Prescaler DIV16 (24MHz/16 = 1.5MHz)
-               | ADC_REFSEL_VDDREF_gc;  // VDD reference
+               | ADC_REFSEL_VDDREF_gc;  // VDD reference (matches VREF.ADC0REF setting)
     
     // Configure input pin (PD0/AIN0) as input with no pull-up
     PORTD.DIRCLR = PIN0_bm;     // Set PD0 as input
@@ -156,16 +158,15 @@ void uart_init(void)
     // or PC0/PC1 depending on pin mapping
     
     // Set baud rate (9600 baud @ 24MHz)
-    // BAUD = F_CPU / (16 * desired_baud) = 24000000 / (16 * 9600) = 156.25 ≈ 156
-    uint16_t baud_setting = (F_CPU / (16UL * 9600UL));
+    // For AVR128: BAUD = (64 * F_CPU) / (16 * desired_baud)
+    uint16_t baud_setting = (uint32_t)(64UL * F_CPU) / (16UL * 9600UL);
     USART0.BAUD = baud_setting;
     
     // Configure USART0
     USART0.CTRLB = USART_TXEN_bm;  // Enable transmitter
     
     // Set TX pin as output (PA0 for USART0)
-    PORTA.DIRSET = PIN0_bm;  // Note: This conflicts with LED on PA0
-    // In practice, use different pin for LED or different USART pins
+    PORTA.DIRSET = PIN0_bm;
 }
 
 // Transmit single character via UART

@@ -72,17 +72,16 @@ unsigned char uart_receive(void);
 void uart_print_string(const char* str);
 void uart_print_hex(uint8_t value);
 
-// Global variables
-volatile lin_role_t node_role = LIN_MASTER;
-volatile uint8_t led_state = 0;
+// Global variable for node role
+lin_role_t node_role = LIN_MASTER;
 
 int main(void)
 {
     // Initialize system
     system_init();
     
-    // Configure LED on PA0 for status indication
-    PORTA.DIRSET = PIN0_bm;
+    // Configure LED on PA1 for status indication
+    PORTA.DIRSET = PIN1_bm;
     
     // Initialize debug UART on different port
     // Note: In real application, use separate UART for debugging
@@ -105,7 +104,7 @@ int main(void)
         while(1)
         {
             // Toggle LED to indicate activity
-            PORTA.OUTTGL = PIN0_bm;
+            PORTA.OUTTGL = PIN1_bm;
             
             // Send LIN message
             lin_master_send_message(&message);
@@ -127,7 +126,7 @@ int main(void)
             // Then receive sync and ID
             // Then send response data if ID matches
             
-            PORTA.OUTTGL = PIN0_bm;
+            PORTA.OUTTGL = PIN1_bm;
             _delay_ms(500);
         }
     }
@@ -312,14 +311,21 @@ void lin_slave_send_response(uint8_t *data, uint8_t length)
         lin_send_byte(data[i]);
     }
     
-    // Note: Checksum would be calculated and sent here in full implementation
+    // WARNING: This is a placeholder implementation
+    // In a complete implementation, you must calculate and send the checksum
+    // Otherwise, this will generate invalid LIN frames that fail checksum validation
+    
+    // Example of what should be added:
+    // uint8_t checksum = lin_calculate_checksum(protected_id, data, length);
+    // lin_send_byte(checksum);
 }
 
 // Initialize debug UART (using USART0 for debugging)
 void uart_init(uint32_t baud)
 {
-    // Calculate baud rate
-    uint16_t baud_setting = (F_CPU / (16UL * baud));
+    // Calculate baud rate for AVR128DA/DB
+    // For AVR128: BAUD = (64 * F_CPU) / (16 * baud_rate)
+    uint16_t baud_setting = (uint32_t)(64UL * F_CPU) / (16UL * baud);
     USART0.BAUD = baud_setting;
     
     // Enable transmitter

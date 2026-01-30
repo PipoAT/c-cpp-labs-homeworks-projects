@@ -63,7 +63,7 @@ LIN (Local Interconnect Network) is a serial network protocol used primarily in 
 ### Optional Components:
 | Component | Connection | Purpose |
 |-----------|------------|---------|
-| LED + Resistor | AVR128 PA0 | Activity indicator |
+| LED + Resistor | AVR128 PA1 | Activity indicator |
 | Pull-up resistor (1kΩ) | LIN bus to VBAT | Recessive state |
 | Master termination resistor (1kΩ) | LIN to GND | Only on master node |
 | Diode (1N4148) | Transceiver protection | Optional ESD protection |
@@ -88,7 +88,7 @@ This example implements a **LIN master node** that:
    - Checksum (enhanced LIN 2.x)
 
 4. **Provides LED indication**
-   - Toggles PA0 with each transmitted message
+   - Toggles PA1 with each transmitted message
    - Visual confirmation of activity
 
 ## LIN Frame Structure
@@ -206,7 +206,7 @@ avrdude -c serialupdi -p avr128db48 -U flash:w:main.hex:i
 4. Master sends frames, slave responds when ID matches
 
 ### Expected Behavior:
-- LED blinks at 5 Hz (100ms period)
+- LED on PA1 toggles every 100ms (blinks at 5 Hz: 100ms ON, 100ms OFF)
 - Each blink = one LIN message transmitted
 - Data field increments with each message
 
